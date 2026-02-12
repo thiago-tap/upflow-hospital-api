@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Paciente;
 use App\Models\Leito;
+use App\Enums\StatusLeito;
+use App\Enums\TipoLeito;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,22 +20,23 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Criar alguns pacientes de teste
+        // CPFs apenas numéricos (11 dígitos, válidos pelo algoritmo oficial)
         $pacientes = [
-            ['nome' => 'João Silva', 'cpf' => '123.456.789-00'],
-            ['nome' => 'Maria Santos', 'cpf' => '234.567.890-11'],
-            ['nome' => 'Pedro Oliveira', 'cpf' => '345.678.901-22'],
-            ['nome' => 'Ana Costa', 'cpf' => '456.789.012-33'],
-            ['nome' => 'Carlos Souza', 'cpf' => '567.890.123-44'],
-            ['nome' => 'Juliana Ferreira', 'cpf' => '678.901.234-55'],
-            ['nome' => 'Roberto Lima', 'cpf' => '789.012.345-66'],
-            ['nome' => 'Fernanda Alves', 'cpf' => '890.123.456-77'],
-            ['nome' => 'Lucas Pereira', 'cpf' => '901.234.567-88'],
-            ['nome' => 'Patrícia Rodrigues', 'cpf' => '012.345.678-99'],
-            ['nome' => 'Ricardo Martins', 'cpf' => '111.222.333-44'],
-            ['nome' => 'Camila Souza', 'cpf' => '222.333.444-55'],
-            ['nome' => 'Bruno Costa', 'cpf' => '333.444.555-66'],
-            ['nome' => 'Amanda Oliveira', 'cpf' => '444.555.666-77'],
-            ['nome' => 'Felipe Santos', 'cpf' => '555.666.777-88'],
+            ['nome' => 'João Silva', 'cpf' => '52998224725'],
+            ['nome' => 'Maria Santos', 'cpf' => '11144477735'],
+            ['nome' => 'Pedro Oliveira', 'cpf' => '22255588846'],
+            ['nome' => 'Ana Costa', 'cpf' => '33366699957'],
+            ['nome' => 'Carlos Souza', 'cpf' => '44477711107'],
+            ['nome' => 'Juliana Ferreira', 'cpf' => '55588822200'],
+            ['nome' => 'Roberto Lima', 'cpf' => '66699933310'],
+            ['nome' => 'Fernanda Alves', 'cpf' => '77711144407'],
+            ['nome' => 'Lucas Pereira', 'cpf' => '88822255500'],
+            ['nome' => 'Patrícia Rodrigues', 'cpf' => '99933366610'],
+            ['nome' => 'Ricardo Martins', 'cpf' => '12345678909'],
+            ['nome' => 'Camila Souza', 'cpf' => '98765432100'],
+            ['nome' => 'Bruno Costa', 'cpf' => '14725836982'],
+            ['nome' => 'Amanda Oliveira', 'cpf' => '25836914737'],
+            ['nome' => 'Felipe Santos', 'cpf' => '36914725837'],
         ];
 
         foreach ($pacientes as $paciente) {
@@ -43,23 +46,23 @@ class DatabaseSeeder extends Seeder
         // Criar leitos de teste
         $leitos = [
             // UTI
-            ['codigo' => 'UTI-01', 'paciente_id' => null],
-            ['codigo' => 'UTI-02', 'paciente_id' => null],
-            ['codigo' => 'UTI-03', 'paciente_id' => null],
-            ['codigo' => 'UTI-04', 'paciente_id' => null],
-            ['codigo' => 'UTI-05', 'paciente_id' => null],
+            ['codigo' => 'UTI-01', 'tipo' => TipoLeito::UTI->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'UTI-02', 'tipo' => TipoLeito::UTI->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'UTI-03', 'tipo' => TipoLeito::UTI->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'UTI-04', 'tipo' => TipoLeito::UTI->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'UTI-05', 'tipo' => TipoLeito::UTI->value, 'status' => StatusLeito::LIVRE->value],
             // Enfermaria
-            ['codigo' => 'ENFERMARIA-01', 'paciente_id' => null],
-            ['codigo' => 'ENFERMARIA-02', 'paciente_id' => null],
-            ['codigo' => 'ENFERMARIA-03', 'paciente_id' => null],
-            ['codigo' => 'ENFERMARIA-04', 'paciente_id' => null],
-            ['codigo' => 'ENFERMARIA-05', 'paciente_id' => null],
+            ['codigo' => 'ENFERMARIA-01', 'tipo' => TipoLeito::ENFERMARIA->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'ENFERMARIA-02', 'tipo' => TipoLeito::ENFERMARIA->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'ENFERMARIA-03', 'tipo' => TipoLeito::ENFERMARIA->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'ENFERMARIA-04', 'tipo' => TipoLeito::ENFERMARIA->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'ENFERMARIA-05', 'tipo' => TipoLeito::ENFERMARIA->value, 'status' => StatusLeito::LIVRE->value],
             // Quartos
-            ['codigo' => 'QUARTO-01', 'paciente_id' => null],
-            ['codigo' => 'QUARTO-02', 'paciente_id' => null],
-            ['codigo' => 'QUARTO-03', 'paciente_id' => null],
-            ['codigo' => 'QUARTO-04', 'paciente_id' => null],
-            ['codigo' => 'QUARTO-05', 'paciente_id' => null],
+            ['codigo' => 'QUARTO-01', 'tipo' => TipoLeito::QUARTO->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'QUARTO-02', 'tipo' => TipoLeito::QUARTO->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'QUARTO-03', 'tipo' => TipoLeito::QUARTO->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'QUARTO-04', 'tipo' => TipoLeito::QUARTO->value, 'status' => StatusLeito::LIVRE->value],
+            ['codigo' => 'QUARTO-05', 'tipo' => TipoLeito::QUARTO->value, 'status' => StatusLeito::LIVRE->value],
         ];
 
         foreach ($leitos as $leito) {

@@ -1,43 +1,71 @@
-# 🏥 API de Gerenciamento de Leitos Hospitalares
+# API de Gerenciamento de Leitos Hospitalares
 
-API REST desenvolvida em Laravel para gerenciar a ocupação de leitos em um hospital, permitindo controle completo sobre internações, transferências e consultas de pacientes.
+API REST desenvolvida em Laravel para gerenciar a ocupacao de leitos em um hospital, permitindo controle completo sobre internacoes, transferencias e consultas de pacientes.
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
 Sistema de gerenciamento de leitos hospitalares que permite:
-- ✅ Internar pacientes em leitos
-- ✅ Liberar leitos ocupados
-- ✅ Transferir pacientes entre leitos
-- ✅ Consultar leito de um paciente por CPF
-- ✅ Verificar status de ocupação dos leitos
-- ✅ Listar todos os leitos com seus respectivos status
 
-## 🚀 Tecnologias Utilizadas
+- Internar pacientes em leitos
+- Liberar leitos ocupados
+- Transferir pacientes entre leitos (com transacao atomica)
+- Listar todos os pacientes disponíveis (com paginacao)
+- Consultar leito de um paciente por CPF (com validacao oficial)
+- Verificar status de ocupacao dos leitos
+- Listar todos os leitos com seus respectivos status (com paginacao)
+- Auditoria completa de todas as acoes (ocupar, liberar, transferir)
+
+## Tecnologias Utilizadas
 
 - **PHP 8.2+**
 - **Laravel 12.x**
-- **SQLite** (banco de dados leve e portável)
-- **Scramble** (documentação OpenAPI/Swagger automática)
+- **SQLite** (banco de dados leve e portavel)
+- **Scramble** (documentacao OpenAPI/Swagger automatica)
+- **PHPUnit** (testes automatizados)
 
-## 📦 Pré-requisitos
+## Arquitetura do Projeto
 
-Antes de começar, certifique-se de ter instalado:
+O projeto segue uma arquitetura em camadas com separacao clara de responsabilidades:
+
+```
+Request -> Controller -> Service -> Model -> Database
+               |
+          Resource -> JSON Response
+               |
+        LeitoException (erros de negocio)
+               |
+        AuditoriaLeito (log de acoes)
+```
+
+### Camadas
+
+| Camada | Responsabilidade | Arquivos |
+|---|---|---|
+| **Controller** | Validacao de input e formatacao de response | `LeitoController.php` |
+| **Service** | Logica de negocio, transacoes e auditoria | `LeitoService.php` |
+| **Model** | Relacionamentos e casting de dados | `Leito.php`, `Paciente.php`, `AuditoriaLeito.php` |
+| **Resource** | Padronizacao do formato JSON de saida | `LeitoResource.php`, `PacienteResource.php` |
+| **Enum** | Type safety para status e tipos de leito | `StatusLeito.php`, `TipoLeito.php` |
+| **Exception** | Erros de negocio com HTTP status codes | `LeitoException.php` |
+| **Rule** | Validacao customizada de CPF | `CpfValido.php` |
+
+## Pre-requisitos
 
 - PHP >= 8.2
 - Composer
 - SQLite3
 - Git
 
-## 🔧 Instalação
+## Instalacao
 
-### 1. Clone o repositório
+### 1. Clone o repositorio
 
 ```bash
 git clone <url-do-repositorio>
 cd hospital-api
 ```
 
-### 2. Instale as dependências
+### 2. Instale as dependencias
 
 ```bash
 composer install
@@ -46,76 +74,127 @@ composer install
 ### 3. Configure o ambiente
 
 ```bash
-# Copie o arquivo de ambiente (se necessário)
 cp .env.example .env
-
-# Gere a chave da aplicação
 php artisan key:generate
 ```
 
-### 4. Configure o banco de dados
-
-O projeto já está configurado para usar SQLite. O arquivo `.env` já contém:
-
-```env
-DB_CONNECTION=sqlite
-```
-
-### 5. Execute as migrations e seeders
+### 4. Execute as migrations e seeders
 
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-Isso criará:
-- **15 pacientes** de teste com CPFs únicos
-- **15 leitos** (5 UTI, 5 Enfermaria, 5 Quartos)
+Isso criara:
 
-### 6. Inicie o servidor
+- **15 pacientes** de teste com CPFs validos (apenas numerico, 11 digitos)
+- **15 leitos** (5 UTI, 5 Enfermaria, 5 Quartos)
+- **Tabela de auditoria** para registro de acoes
+
+### 5. Inicie o servidor
 
 ```bash
 php artisan serve
 ```
 
-A API estará disponível em: **http://localhost:8000**
+A API estara disponivel em: **http://localhost:8000**
 
-## 📚 Documentação da API
+### 6. Execute os testes
+
+```bash
+php artisan test
+```
+
+Resultado esperado: **18 testes, 66 assertions, 0 falhas**.
+
+## Documentacao da API
 
 ### Interface Interativa (Swagger/OpenAPI)
 
-Acesse a documentação interativa completa em:
+Acesse a documentacao interativa completa em:
 
 **http://localhost:8000/docs/api**
 
-Nesta interface você pode:
-- 📖 Ver todos os endpoints disponíveis
-- 🧪 Testar as requisições diretamente pelo navegador
-- 📋 Visualizar exemplos de request e response
-- ✅ Ver validações e códigos de status HTTP
+Nesta interface voce pode:
 
-### Endpoints Disponíveis
+- Ver todos os endpoints disponiveis
+- Testar as requisicoes diretamente pelo navegador
+- Visualizar exemplos de request e response
+- Ver validacoes e codigos de status HTTP
 
-#### 1. **Listar todos os leitos**
+### Endpoints Disponiveis
+
+#### 1. Listar todos os leitos
 
 ```http
 GET /api/leitos
+GET /api/leitos?per_page=5
 ```
 
-**Resposta:**
+Parametros de query opcionais:
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `per_page` | int | 15 | Registros por pagina (min: 1, max: 100) |
+
+**Resposta (200):**
+
 ```json
-[
-  {
-    "id_leito": 1,
-    "codigo": "UTI-01",
-    "status": "LIVRE",
-    "paciente": null
-  }
-]
+{
+    "data": [
+        {
+            "id_leito": 1,
+            "codigo": "UTI-01",
+            "tipo": "UTI",
+            "status": "OCUPADO",
+            "paciente": {
+                "id": 1,
+                "nome": "Joao Silva",
+                "cpf": "52998224725"
+            }
+        },
+        {
+            "id_leito": 2,
+            "codigo": "UTI-02",
+            "tipo": "UTI",
+            "status": "LIVRE",
+            "paciente": null
+        }
+    ],
+    "links": { "first": "...", "last": "...", "prev": null, "next": "..." },
+    "meta": { "current_page": 1, "per_page": 15, "total": 15 }
+}
 ```
 
 ---
 
-#### 2. **Ocupar um leito**
+#### 2. Listar todos os pacientes
+
+```http
+GET /api/pacientes
+GET /api/pacientes?per_page=10
+```
+
+Parametros de query opcionais:
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `per_page` | int | 15 | Registros por pagina (min: 1, max: 100) |
+
+**Resposta (200):**
+
+```json
+{
+    "data": [
+        { "id": 1, "nome": "Joao Silva", "cpf": "52998224725" }
+    ],
+    "links": { "..." },
+    "meta": { "current_page": 1, "per_page": 15, "total": 15 }
+}
+```
+
+---
+
+#### 3. Ocupar um leito
 
 ```http
 POST /api/leitos/ocupar
@@ -123,27 +202,35 @@ Content-Type: application/json
 ```
 
 **Body:**
+
 ```json
 {
-  "id_leito": 1,
-  "id_paciente": 1
+    "id_leito": 1,
+    "id_paciente": 1
 }
 ```
 
 **Resposta de Sucesso (200):**
+
 ```json
 {
-  "mensagem": "Paciente internado com sucesso."
+    "mensagem": "Paciente internado com sucesso."
 }
 ```
 
-**Possíveis Erros (400):**
-- Leito já ocupado
-- Paciente já está em outro leito
+**Possiveis Erros (400):**
+
+```json
+{ "erro": "Este leito nao esta disponivel (Ocupado ou em Manutencao)." }
+```
+
+```json
+{ "erro": "Este paciente ja esta ocupando outro leito." }
+```
 
 ---
 
-#### 3. **Liberar um leito**
+#### 4. Liberar um leito
 
 ```http
 POST /api/leitos/liberar
@@ -151,22 +238,24 @@ Content-Type: application/json
 ```
 
 **Body:**
+
 ```json
 {
-  "id_leito": 1
+    "id_leito": 1
 }
 ```
 
-**Resposta:**
+**Resposta (200):**
+
 ```json
 {
-  "mensagem": "Leito liberado com sucesso."
+    "mensagem": "Leito liberado com sucesso."
 }
 ```
 
 ---
 
-#### 4. **Transferir paciente**
+#### 5. Transferir paciente
 
 ```http
 POST /api/leitos/transferir
@@ -174,215 +263,318 @@ Content-Type: application/json
 ```
 
 **Body:**
+
 ```json
 {
-  "id_leito_atual": 1,
-  "id_leito_destino": 2
+    "id_leito_atual": 1,
+    "id_leito_destino": 2
 }
 ```
 
-**Resposta:**
+**Resposta (200):**
+
 ```json
 {
-  "mensagem": "Transferência realizada com sucesso."
+    "mensagem": "Transferencia realizada com sucesso."
 }
 ```
 
-**Possíveis Erros (400):**
-- Leito de origem não possui paciente
-- Leito de destino já está ocupado
+**Possiveis Erros (400):**
+
+```json
+{ "erro": "Nao ha paciente no leito de origem para transferir." }
+```
+
+```json
+{ "erro": "O leito de destino ja esta ocupado." }
+```
 
 ---
 
-#### 5. **Buscar leito por CPF**
+#### 6. Buscar leito por CPF
 
 ```http
 GET /api/pacientes/{cpf}/leito
 ```
 
+**Importante:** O CPF deve ser enviado apenas com numeros (11 digitos), sem pontos ou tracos.
+
 **Exemplo:**
+
 ```http
-GET /api/pacientes/123.456.789-00/leito
+GET /api/pacientes/52998224725/leito
 ```
 
-**Resposta (200):**
+**Resposta (200) - Paciente internado:**
+
 ```json
 {
-  "paciente": "João Silva",
-  "leito": "UTI-01",
-  "status": "OCUPADO"
+    "paciente": "Joao Silva",
+    "leito": "UTI-01",
+    "tipo": "UTI",
+    "status": "OCUPADO"
 }
 ```
 
-**Resposta se não encontrado (404):**
+**Resposta (200) - Paciente nao internado:**
+
 ```json
 {
-  "erro": "Paciente não encontrado."
+    "mensagem": "O paciente nao esta internado no momento."
+}
+```
+
+**Resposta (404) - Paciente nao encontrado:**
+
+```json
+{
+    "erro": "Paciente nao encontrado."
+}
+```
+
+**Resposta (422) - CPF invalido:**
+
+```json
+{
+    "erro": "O cpf deve conter exatamente 11 digitos numericos."
 }
 ```
 
 ---
 
-## 🧪 Testando a API
+## Codigos de Status HTTP
 
-### Opção 1: Interface Swagger (Recomendado)
+| Codigo | Significado | Quando ocorre |
+|---|---|---|
+| 200 | Sucesso | Operacao realizada com sucesso |
+| 400 | Erro de negocio | Leito ocupado, paciente ja internado, etc. |
+| 404 | Nao encontrado | Paciente nao existe no banco |
+| 422 | Validacao falhou | Campos obrigatorios ausentes, CPF invalido |
+| 429 | Rate limit | Mais de 60 requisicoes por minuto |
+
+---
+
+## Testando a API
+
+### Opcao 1: Interface Swagger (Recomendado)
 
 1. Acesse http://localhost:8000/docs/api
 2. Clique em qualquer endpoint
 3. Clique em **"Try it out"**
-4. Preencha os dados necessários
+4. Preencha os dados necessarios
 5. Clique em **"Send"** ou **"Execute"**
 
-### Opção 2: cURL
+### Opcao 2: cURL
 
 ```bash
-# Listar todos os leitos
-curl http://localhost:8000/api/leitos
+# Listar todos os leitos (5 por pagina)
+curl http://localhost:8000/api/leitos?per_page=5
 
 # Ocupar um leito
 curl -X POST http://localhost:8000/api/leitos/ocupar \
   -H "Content-Type: application/json" \
   -d '{"id_leito": 1, "id_paciente": 1}'
 
-# Buscar leito por CPF
-curl http://localhost:8000/api/pacientes/123.456.789-00/leito
+# Buscar leito por CPF (apenas numeros)
+curl http://localhost:8000/api/pacientes/52998224725/leito
+
+# Transferir paciente
+curl -X POST http://localhost:8000/api/leitos/transferir \
+  -H "Content-Type: application/json" \
+  -d '{"id_leito_atual": 1, "id_leito_destino": 3}'
+
+# Liberar leito
+curl -X POST http://localhost:8000/api/leitos/liberar \
+  -H "Content-Type: application/json" \
+  -d '{"id_leito": 3}'
 ```
 
-### Opção 3: Postman
+### Opcao 3: Postman
 
-Importe a coleção usando a especificação OpenAPI:
+Importe a colecao usando a especificacao OpenAPI:
+
 ```
 http://localhost:8000/docs/api.json
 ```
 
 ---
 
-## 📊 Dados de Teste
+## Dados de Teste
 
 ### Pacientes (15 cadastrados)
 
-| ID | Nome | CPF |
-|---|---|---|
-| 1 | João Silva | 123.456.789-00 |
-| 2 | Maria Santos | 234.567.890-11 |
-| 3 | Pedro Oliveira | 345.678.901-22 |
-| 4 | Ana Costa | 456.789.012-33 |
-| 5 | Carlos Souza | 567.890.123-44 |
-| 6 | Juliana Ferreira | 678.901.234-55 |
-| 7 | Roberto Lima | 789.012.345-66 |
-| 8 | Fernanda Alves | 890.123.456-77 |
-| 9 | Lucas Pereira | 901.234.567-88 |
-| 10 | Patrícia Rodrigues | 012.345.678-99 |
-| 11 | Ricardo Martins | 111.222.333-44 |
-| 12 | Camila Souza | 222.333.444-55 |
-| 13 | Bruno Costa | 333.444.555-66 |
-| 14 | Amanda Oliveira | 444.555.666-77 |
-| 15 | Felipe Santos | 555.666.777-88 |
+| ID  | Nome               | CPF         |
+| --- | ------------------ | ----------- |
+| 1   | Joao Silva         | 52998224725 |
+| 2   | Maria Santos       | 11144477735 |
+| 3   | Pedro Oliveira     | 22255588846 |
+| 4   | Ana Costa          | 33366699957 |
+| 5   | Carlos Souza       | 44477711107 |
+| 6   | Juliana Ferreira   | 55588822200 |
+| 7   | Roberto Lima       | 66699933310 |
+| 8   | Fernanda Alves     | 77711144407 |
+| 9   | Lucas Pereira      | 88822255500 |
+| 10  | Patricia Rodrigues | 99933366610 |
+| 11  | Ricardo Martins    | 12345678909 |
+| 12  | Camila Souza       | 98765432100 |
+| 13  | Bruno Costa        | 14725836982 |
+| 14  | Amanda Oliveira    | 25836914737 |
+| 15  | Felipe Santos      | 36914725837 |
 
-### Leitos (15 disponíveis)
+### Leitos (15 disponiveis)
 
-- **UTI:** UTI-01, UTI-02, UTI-03, UTI-04, UTI-05
-- **Enfermaria:** ENFERMARIA-01 a 05
-- **Quartos:** QUARTO-01 a 05
+| Tipo | Codigos |
+|---|---|
+| **UTI** | UTI-01, UTI-02, UTI-03, UTI-04, UTI-05 |
+| **Enfermaria** | ENFERMARIA-01, ENFERMARIA-02, ENFERMARIA-03, ENFERMARIA-04, ENFERMARIA-05 |
+| **Quartos** | QUARTO-01, QUARTO-02, QUARTO-03, QUARTO-04, QUARTO-05 |
 
 ---
 
-## 🏗️ Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 hospital-api/
 ├── app/
+│   ├── Enums/
+│   │   ├── StatusLeito.php             # Enum: LIVRE, OCUPADO, MANUTENCAO
+│   │   └── TipoLeito.php              # Enum: UTI, ENFERMARIA, QUARTO
+│   ├── Exceptions/
+│   │   └── LeitoException.php          # Exceptions de negocio com status HTTP
 │   ├── Http/
-│   │   └── Controllers/
-│   │       └── LeitoController.php    # Controller principal da API
-│   └── Models/
-│       ├── Leito.php                  # Model de Leito
-│       └── Paciente.php               # Model de Paciente
+│   │   ├── Controllers/
+│   │   │   └── LeitoController.php     # Controller (validacao + response)
+│   │   └── Resources/
+│   │       ├── LeitoResource.php       # JSON Resource para leitos
+│   │       └── PacienteResource.php    # JSON Resource para pacientes
+│   ├── Models/
+│   │   ├── AuditoriaLeito.php          # Model de auditoria
+│   │   ├── Leito.php                   # Model de leito (com enum cast)
+│   │   └── Paciente.php               # Model de paciente
+│   ├── Providers/
+│   │   └── AppServiceProvider.php      # Rate limiting config
+│   ├── Rules/
+│   │   └── CpfValido.php              # Validacao de CPF (algoritmo oficial)
+│   └── Services/
+│       └── LeitoService.php            # Logica de negocio + auditoria
+├── bootstrap/
+│   └── app.php                         # Exception handler global (JSON)
 ├── database/
-│   ├── migrations/                     # Migrations do banco
+│   ├── migrations/                     # Schema do banco
 │   └── seeders/
-│       └── DatabaseSeeder.php         # Seed de dados de teste
+│       └── DatabaseSeeder.php          # 15 pacientes + 15 leitos
 ├── routes/
-│   └── api.php                        # Rotas da API
-├── .env                               # Configurações do ambiente
-└── README.md                          # Este arquivo
+│   └── api.php                         # Rotas com rate limiting
+├── tests/
+│   └── Feature/
+│       └── LeitoApiTest.php            # 18 testes, 66 assertions
+└── README.md
 ```
 
 ---
 
-## 🔐 Regras de Negócio
+## Regras de Negocio
 
-### ✅ Validações Implementadas
+### Validacoes Implementadas
 
-1. **Um paciente não pode estar em mais de um leito simultaneamente**
-   - Ao tentar ocupar um leito com paciente já internado, retorna erro 400
+1. **Um paciente nao pode estar em mais de um leito simultaneamente**
+   - Ao tentar ocupar um leito com paciente ja internado, retorna erro 400
 
-2. **Cada leito só pode ter um paciente por vez**
-   - Ao tentar ocupar leito já ocupado, retorna erro 400
+2. **Cada leito so pode ter um paciente por vez**
+   - Ao tentar ocupar leito ja ocupado ou em manutencao, retorna erro 400
+   - Constraint UNIQUE no banco garante integridade
 
-3. **Transferências só ocorrem entre leitos válidos**
-   - Leito de origem deve ter paciente
-   - Leito de destino deve estar livre
+3. **Transferencias sao atomicas (DB::transaction)**
+   - Liberar leito origem + ocupar leito destino acontecem na mesma transacao
+   - Se uma falhar, a outra tambem e revertida
 
-4. **CPF único por paciente**
+4. **CPF unico e validado**
    - Constraint UNIQUE no banco de dados
+   - Validacao com algoritmo oficial (digitos verificadores)
+   - Aceita apenas 11 digitos numericos (sem mascara)
+
+5. **Rate Limiting**
+   - 60 requisicoes por minuto por IP
+   - Retorna HTTP 429 quando excedido
+
+6. **Auditoria completa**
+   - Toda acao (OCUPAR, LIBERAR, TRANSFERIR) e registrada na tabela `auditoria_leitos`
+   - Inclui log em arquivo via `Log::info()`
 
 ---
 
-## 🧹 Comandos Úteis
+## Testes Automatizados
 
-### Resetar o banco de dados
+O projeto conta com **18 testes** cobrindo todos os endpoints e regras de negocio:
+
+```
+ PASS  Tests\Feature\LeitoApiTest
+ - listar leitos retorna paginado
+ - listar leitos com per page customizado
+ - listar leitos com paciente
+ - ocupar leito sucesso
+ - ocupar leito ja ocupado
+ - ocupar paciente ja internado
+ - ocupar leito validacao campos obrigatorios
+ - liberar leito sucesso
+ - liberar leito validacao
+ - transferir sucesso
+ - transferir sem paciente na origem
+ - transferir destino ocupado
+ - buscar por cpf encontrado
+ - buscar por cpf nao encontrado
+ - buscar por cpf invalido
+ - buscar por cpf paciente nao internado
+ - listar pacientes retorna paginado
+ - rate limiting
+
+Tests: 18 passed (66 assertions)
+```
+
+Para executar:
 
 ```bash
+php artisan test
+```
+
+---
+
+## Comandos Uteis
+
+```bash
+# Resetar banco com dados de teste
 php artisan migrate:fresh --seed
-```
 
-### Ver rotas da API
+# Executar testes
+php artisan test
 
-```bash
+# Ver rotas da API
 php artisan route:list
-```
 
-### Limpar cache
-
-```bash
-php artisan cache:clear
-php artisan config:clear
+# Limpar cache
+php artisan cache:clear && php artisan config:clear
 ```
 
 ---
 
-## 📝 Observações Técnicas
+## Decisoes de Design
 
-### Arquitetura
-
-- **RESTful API** seguindo as melhores práticas
-- **Controllers magros** com lógica de negócio encapsulada
-- **Validações** usando Laravel Request Validation
-- **Relacionamentos Eloquent** (belongsTo, hasOne)
-- **Responses padronizadas** com códigos HTTP apropriados
-
-### Banco de Dados
-
-- **SQLite** para facilitar portabilidade e execução
-- **Migrations versionadas** para controle de schema
-- **Seeders** para dados de teste reproduzíveis
-- **Foreign Keys** com constraints para integridade
-
-### Documentação
-
-- **OpenAPI/Swagger** gerado automaticamente via Scramble
-- **PHPDoc** completo nos métodos do controller
-- **Interface interativa** para testes sem necessidade de ferramentas externas
+1. **Service Layer**: Logica de negocio isolada do controller, facilitando testes e manutencao
+2. **Custom Exceptions**: Erros de negocio lancam exceptions tipadas, tratadas globalmente no handler
+3. **API Resources**: Formato de saida JSON desacoplado dos models, permitindo evolucao independente
+4. **Enums PHP 8.1**: Type safety para status e tipos de leito, com cast automatico no Eloquent
+5. **CPF apenas numerico**: Simplifica integracoes, evita problemas de encoding na URL
+6. **Paginacao configuravel**: `per_page` via query parameter com limites de seguranca (1-100)
+7. **SQLite**: Portabilidade total, sem necessidade de configurar servidor de banco
+8. **Scramble**: Documentacao Swagger gerada automaticamente a partir do codigo
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Erro: "Database file not found"
 
 ```bash
-# Certifique-se de que o arquivo foi criado
 touch database/database.sqlite
 php artisan migrate:fresh --seed
 ```
@@ -390,50 +582,19 @@ php artisan migrate:fresh --seed
 ### Erro: "Class not found"
 
 ```bash
-# Recrie o autoload
 composer dump-autoload
 ```
 
 ### Erro 404 nas rotas da API
 
-Certifique-se de que o arquivo `bootstrap/app.php` contém:
+Certifique-se de que o arquivo `bootstrap/app.php` contém a configuracao de rotas API.
 
-```php
-->withRouting(
-    api: __DIR__.'/../routes/api.php',
-    // ...
-)
-```
+### Erro 429 (Too Many Requests)
+
+O rate limiting esta ativo. Aguarde 1 minuto ou ajuste o limite em `AppServiceProvider.php`.
 
 ---
 
-## 👨‍💻 Desenvolvimento
+## Licenca
 
-### Tecnologias e Pacotes
-
-- **dedoc/scramble**: Documentação OpenAPI automática
-- **Laravel Sanctum**: Preparado para autenticação (não implementada conforme requisitos)
-- **SQLite**: Banco de dados leve e portável
-
-### Decisões de Design
-
-1. **SQLite em vez de MySQL/PostgreSQL**: Facilita a execução sem necessidade de configurar servidor de BD
-2. **Scramble**: Documentação automática e atualizada com o código
-3. **Seeders com dados realistas**: 15 pacientes e 15 leitos para testes completos
-4. **Validação no Controller**: Mantém a simplicidade conforme escopo do projeto
-
----
-
-## 📄 Licença
-
-Este projeto foi desenvolvido como parte de um teste técnico.
-
----
-
-## 📧 Contato
-
-Para dúvidas sobre o projeto, entre em contato através do repositório.
-
----
-
-**Desenvolvido com ❤️ usando Laravel**
+Este projeto foi desenvolvido como parte de um teste tecnico.

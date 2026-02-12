@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-// ESTAS SÃO AS LINHAS QUE FALTAM OU ESTÃO INCORRETAS:
 use App\Models\Leito;
 use App\Models\Paciente;
 
@@ -12,8 +11,8 @@ class HospitalSeeder extends Seeder
     public function run()
     {
         // Limpa a tabela antes de criar (opcional, evita erro de duplicidade se rodar 2x)
-        // Leito::truncate();
-        // Paciente::truncate();
+        // Nota: Em SQLite com Foreign Keys, truncate pode falhar se não desativar FKs antes.
+        // O ideal é usar migrate:fresh --seed
 
         // Criar leitos
         Leito::create(['codigo' => 'UTI-01']);

@@ -14,6 +14,8 @@ return new class extends Migration
     Schema::create('leitos', function (Blueprint $table) {
         $table->id();
         $table->string('codigo')->unique(); // Ex: 'UTI-01'
+        $table->string('tipo')->default('ENFERMARIA'); // UTI, QUARTO, ENFERMARIA
+        $table->string('status')->default('LIVRE'); // LIVRE, OCUPADO, MANUTENCAO
 
         // Chave estrangeira para a tabela 'pacientes'.
         // 'nullable' significa que pode ficar vazio (livre).
