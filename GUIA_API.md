@@ -1,12 +1,12 @@
 # Guia de Uso da API - Interface Swagger/OpenAPI
 
-## Acesso a Documentacao
+## Acesso à Documentação
 
 Abra seu navegador e acesse: **http://localhost:8000/docs/api**
 
 ---
 
-## Dados de Teste Disponiveis
+## Dados de Teste Disponíveis
 
 ### Pacientes (15 no total)
 
@@ -28,11 +28,11 @@ Abra seu navegador e acesse: **http://localhost:8000/docs/api**
 | 14  | Amanda Oliveira    | 25836914737 |
 | 15  | Felipe Santos      | 36914725837 |
 
-> **Importante:** Todos os CPFs sao apenas numericos (11 digitos), sem pontos ou tracos. Todos passam na validacao oficial de digitos verificadores.
+> **Importante:** Todos os CPFs são apenas numéricos (11 dígitos), sem pontos ou traços. Todos passam na validação oficial de dígitos verificadores.
 
 ### Leitos (15 no total)
 
-| Tipo | Codigos |
+| Tipo | Códigos |
 |---|---|
 | **UTI** | UTI-01, UTI-02, UTI-03, UTI-04, UTI-05 |
 | **Enfermaria** | ENFERMARIA-01, ENFERMARIA-02, ENFERMARIA-03, ENFERMARIA-04, ENFERMARIA-05 |
@@ -46,17 +46,17 @@ Abra seu navegador e acesse: **http://localhost:8000/docs/api**
 
 **Endpoint:** `GET /api/leitos`
 
-**Parametros opcionais:**
+**Parâmetros opcionais:**
 
-| Parametro | Tipo | Padrao | Descricao |
+| Parâmetro | Tipo | Padrão | Descrição |
 |---|---|---|---|
-| `per_page` | int | 15 | Registros por pagina (min: 1, max: 100) |
+| `per_page` | int | 15 | Registros por página (min: 1, max: 100) |
 
 **Como testar:**
 
 1. Clique em `GET /api/leitos` na interface
-2. Clique no botao **"Try it out"**
-3. (Opcional) Altere o valor de `per_page` para controlar a paginacao
+2. Clique no botão **"Try it out"**
+3. (Opcional) Altere o valor de `per_page` para controlar a paginação
 4. Clique em **"Execute"**
 5. Veja a resposta abaixo mostrando os leitos paginados
 
@@ -101,12 +101,12 @@ Abra seu navegador e acesse: **http://localhost:8000/docs/api**
 }
 ```
 
-**Exemplos de paginacao:**
+**Exemplos de paginação:**
 
 ```
-GET /api/leitos              -> 15 leitos por pagina (padrao)
-GET /api/leitos?per_page=5   -> 5 leitos por pagina (3 paginas)
-GET /api/leitos?per_page=3   -> 3 leitos por pagina (5 paginas)
+GET /api/leitos              -> 15 leitos por página (padrão)
+GET /api/leitos?per_page=5   -> 5 leitos por página (3 páginas)
+GET /api/leitos?per_page=3   -> 3 leitos por página (5 páginas)
 ```
 
 ---
@@ -115,11 +115,11 @@ GET /api/leitos?per_page=3   -> 3 leitos por pagina (5 paginas)
 
 **Endpoint:** `GET /api/pacientes`
 
-**Parametros opcionais:**
+**Parâmetros opcionais:**
 
-| Parametro | Tipo | Padrao | Descricao |
+| Parâmetro | Tipo | Padrão | Descrição |
 |---|---|---|---|
-| `per_page` | int | 15 | Registros por pagina (min: 1, max: 100) |
+| `per_page` | int | 15 | Registros por página (min: 1, max: 100) |
 
 **Como testar:**
 
@@ -178,7 +178,7 @@ GET /api/leitos?per_page=3   -> 3 leitos por pagina (5 paginas)
 }
 ```
 
-**Possiveis erros (400):**
+**Possíveis erros (400):**
 
 ```json
 { "erro": "Este leito nao esta disponivel (Ocupado ou em Manutencao)." }
@@ -188,7 +188,7 @@ GET /api/leitos?per_page=3   -> 3 leitos por pagina (5 paginas)
 { "erro": "Este paciente ja esta ocupando outro leito." }
 ```
 
-**Erro de validacao (422):**
+**Erro de validação (422):**
 
 ```json
 {
@@ -239,7 +239,7 @@ GET /api/leitos?per_page=3   -> 3 leitos por pagina (5 paginas)
 
 **Endpoint:** `POST /api/leitos/transferir`
 
-A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa falhar, tudo e revertido.
+A transferência é realizada de forma atômica (transação no banco). Se uma etapa falhar, tudo é revertido.
 
 **Como testar:**
 
@@ -272,7 +272,7 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 }
 ```
 
-**Possiveis erros (400):**
+**Possíveis erros (400):**
 
 ```json
 { "erro": "Nao ha paciente no leito de origem para transferir." }
@@ -288,7 +288,7 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 
 **Endpoint:** `GET /api/pacientes/{cpf}/leito`
 
-**Importante:** O CPF deve ser enviado apenas com numeros (11 digitos), sem pontos ou tracos. O CPF e validado com o algoritmo oficial de digitos verificadores.
+**Importante:** O CPF deve ser enviado apenas com números (11 dígitos), sem pontos ou traços. O CPF é validado com o algoritmo oficial de dígitos verificadores.
 
 **Como testar:**
 
@@ -298,7 +298,7 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 4. No campo **cpf**, digite o CPF do paciente (exemplo: `52998224725`)
 5. Clique em **"Execute"**
 
-**Exemplo:** Buscar onde esta o paciente Joao Silva:
+**Exemplo:** Buscar onde está o paciente Joao Silva:
 
 - CPF: `52998224725`
 
@@ -313,7 +313,7 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 }
 ```
 
-**Resposta - Paciente nao internado (200):**
+**Resposta - Paciente não internado (200):**
 
 ```json
 {
@@ -321,7 +321,7 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 }
 ```
 
-**Resposta - Paciente nao encontrado (404):**
+**Resposta - Paciente não encontrado (404):**
 
 ```json
 {
@@ -329,7 +329,7 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 }
 ```
 
-**Resposta - CPF invalido (422):**
+**Resposta - CPF inválido (422):**
 
 ```json
 {
@@ -339,19 +339,19 @@ A transferencia e realizada de forma atomica (transacao no banco). Se uma etapa 
 
 ---
 
-## Codigos de Status HTTP
+## Códigos de Status HTTP
 
-| Codigo | Significado | Quando ocorre |
+| Código | Significado | Quando ocorre |
 |---|---|---|
-| 200 | Sucesso | Operacao realizada com sucesso |
-| 400 | Erro de negocio | Leito ocupado, paciente ja internado, etc. |
-| 404 | Nao encontrado | Paciente nao existe no banco |
-| 422 | Validacao falhou | Campos obrigatorios ausentes, CPF invalido |
-| 429 | Rate limit | Mais de 60 requisicoes por minuto |
+| 200 | Sucesso | Operação realizada com sucesso |
+| 400 | Erro de negócio | Leito ocupado, paciente já internado, etc. |
+| 404 | Não encontrado | Paciente não existe no banco |
+| 422 | Validação falhou | Campos obrigatórios ausentes, CPF inválido |
+| 429 | Rate limit | Mais de 60 requisições por minuto |
 
 ---
 
-## Cenario de Teste Completo
+## Cenário de Teste Completo
 
 Siga este fluxo para testar todas as funcionalidades:
 
@@ -363,13 +363,13 @@ GET /api/leitos
 
 Todos os 15 leitos devem aparecer com status "LIVRE" e paciente `null`.
 
-### Passo 2: Listar pacientes disponiveis
+### Passo 2: Listar pacientes disponíveis
 
 ```
 GET /api/pacientes
 ```
 
-Veja os 15 pacientes disponiveis e seus IDs.
+Veja os 15 pacientes disponíveis e seus IDs.
 
 ### Passo 3: Internar 3 pacientes
 
@@ -394,15 +394,15 @@ POST /api/leitos/ocupar
 GET /api/leitos
 ```
 
-Agora voce vera 3 leitos ocupados (UTI-01, ENFERMARIA-01, QUARTO-01).
+Agora você verá 3 leitos ocupados (UTI-01, ENFERMARIA-01, QUARTO-01).
 
-### Passo 5: Buscar onde esta Joao Silva
+### Passo 5: Buscar onde está Joao Silva
 
 ```
 GET /api/pacientes/52998224725/leito
 ```
 
-Resposta: Joao Silva esta no leito UTI-01.
+Resposta: Joao Silva está no leito UTI-01.
 
 ### Passo 6: Transferir Joao Silva para outro leito
 
@@ -411,17 +411,17 @@ POST /api/leitos/transferir
 { "id_leito_atual": 1, "id_leito_destino": 3 }
 ```
 
-### Passo 7: Confirmar transferencia
+### Passo 7: Confirmar transferência
 
 ```
 GET /api/pacientes/52998224725/leito
 ```
 
-Agora Joao estara no leito UTI-03.
+Agora Joao estará no leito UTI-03.
 
-### Passo 8: Testar erros de negocio
+### Passo 8: Testar erros de negócio
 
-Tente ocupar o leito UTI-03 (ja ocupado):
+Tente ocupar o leito UTI-03 (já ocupado):
 
 ```json
 POST /api/leitos/ocupar
@@ -430,13 +430,13 @@ POST /api/leitos/ocupar
 
 Resposta esperada: `{ "erro": "Este leito nao esta disponivel (Ocupado ou em Manutencao)." }`
 
-### Passo 9: Testar validacao de CPF
+### Passo 9: Testar validação de CPF
 
 ```
 GET /api/pacientes/12345678900/leito
 ```
 
-Resposta esperada: `{ "erro": "O cpf informado nao e valido." }` (CPF com digitos verificadores incorretos)
+Resposta esperada: `{ "erro": "O cpf informado nao e valido." }` (CPF com dígitos verificadores incorretos)
 
 ### Passo 10: Liberar um leito
 
@@ -451,7 +451,7 @@ POST /api/leitos/liberar
 GET /api/leitos?per_page=5
 ```
 
-Veja a paginacao funcionando (5 registros por pagina).
+Veja a paginação funcionando (5 registros por página).
 
 ---
 
@@ -460,7 +460,7 @@ Veja a paginacao funcionando (5 registros por pagina).
 Se preferir usar a linha de comando:
 
 ```bash
-# Listar leitos (5 por pagina)
+# Listar leitos (5 por página)
 curl http://localhost:8000/api/leitos?per_page=5
 
 # Listar pacientes
@@ -471,7 +471,7 @@ curl -X POST http://localhost:8000/api/leitos/ocupar \
   -H "Content-Type: application/json" \
   -d '{"id_leito": 1, "id_paciente": 1}'
 
-# Buscar por CPF (apenas numeros)
+# Buscar por CPF (apenas números)
 curl http://localhost:8000/api/pacientes/52998224725/leito
 
 # Transferir paciente
@@ -499,14 +499,14 @@ php artisan migrate:fresh --seed
 
 ## Dicas
 
-- Use os **IDs** dos pacientes e leitos da tabela acima
-- Teste os **casos de erro** tentando ocupar um leito ja ocupado
-- Teste a **validacao de CPF** com CPFs invalidos
-- A **paginacao** pode ser ajustada via `per_page` (1 a 100)
-- Teste o **rate limiting** fazendo mais de 60 requisicoes por minuto
-- A resposta mostra o **status HTTP** (200 = sucesso, 400 = erro de negocio, 404 = nao encontrado, 422 = validacao)
-- Todos os endpoints podem ser testados **diretamente pela interface**, sem precisar de Postman ou cURL
+- Use os **IDs** dos pacientes e leitos da tabela acima.
+- Teste os **casos de erro** tentando ocupar um leito já ocupado.
+- Teste a **validação de CPF** com CPFs inválidos.
+- A **paginação** pode ser ajustada via `per_page` (1 a 100).
+- Teste o **rate limiting** fazendo mais de 60 requisições por minuto.
+- A resposta mostra o **status HTTP** (200 = sucesso, 400 = erro de negócio, 404 = não encontrado, 422 = validação).
+- Todos os endpoints podem ser testados **diretamente pela interface**, sem precisar de Postman ou cURL.
 
 ---
 
-**Pronto! Agora voce pode testar toda a API atraves da interface visual em http://localhost:8000/docs/api**
+**Pronto! Agora você pode testar toda a API através da interface visual em http://localhost:8000/docs/api**

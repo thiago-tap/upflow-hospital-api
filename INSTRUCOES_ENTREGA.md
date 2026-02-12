@@ -1,30 +1,30 @@
-# Instrucoes para Entrega do Teste Tecnico
+# Instruções para Entrega do Teste Técnico
 
 ## Checklist Final
 
 Antes de enviar, certifique-se de que:
 
-- [ ] O README.md esta completo e atualizado
-- [ ] O projeto esta funcionando localmente (`php artisan serve`)
-- [ ] A documentacao Swagger esta acessivel em `/docs/api`
+- [ ] O README.md está completo e atualizado
+- [ ] O projeto está funcionando localmente (`php artisan serve`)
+- [ ] A documentação Swagger está acessível em `/docs/api`
 - [ ] Todos os endpoints foram testados
 - [ ] Os 18 testes automatizados passam (`php artisan test`)
 - [ ] O banco de dados foi populado com seeders (15 pacientes + 15 leitos)
-- [ ] O repositorio Git foi inicializado
-- [ ] O commit foi feito com todas as alteracoes
+- [ ] O repositório Git foi inicializado
+- [ ] O commit foi feito com todas as alterações
 
 ---
 
-## Opcao 1: Publicar no GitHub (Recomendado)
+## Opção 1: Publicar no GitHub (Recomendado)
 
-### Passo 1: Criar repositorio no GitHub
+### Passo 1: Criar repositório no GitHub
 
 1. Acesse: https://github.com/new
 2. Preencha os campos:
    - **Repository name:** `hospital-api`
    - **Description:** "API REST para gerenciamento de leitos hospitalares - Laravel 12"
    - **Visibility:** Escolha **Public** ou **Private**
-   - **NAO marque** "Initialize this repository with a README"
+   - **NÃO marque** "Initialize this repository with a README"
 3. Clique em **"Create repository"**
 
 ### Passo 2: Adicionar o remote e fazer push
@@ -32,39 +32,39 @@ Antes de enviar, certifique-se de que:
 No terminal do projeto, execute:
 
 ```bash
-# Adicione o remote (substitua SEU-USUARIO pelo seu usuario do GitHub)
+# Adicione o remote (substitua SEU-USUARIO pelo seu usuário do GitHub)
 git remote add origin https://github.com/SEU-USUARIO/hospital-api.git
 
-# Renomeie a branch para main (padrao do GitHub)
+# Renomeie a branch para main (padrão do GitHub)
 git branch -M main
 
-# Faca o push
+# Faça o push
 git push -u origin main
 ```
 
 ### Passo 3: Enviar o link
 
-Envie o link do repositorio com as seguintes informacoes:
+Envie o link do repositório com as seguintes informações:
 
 ```
-Repositorio: https://github.com/SEU-USUARIO/hospital-api
+Repositório: https://github.com/SEU-USUARIO/hospital-api
 
-Documentacao: Todas as instrucoes estao no README.md do projeto
-API Docs: Apos executar o projeto, a documentacao interativa esta disponivel em http://localhost:8000/docs/api
+Documentação: Todas as instruções estão no README.md do projeto.
+API Docs: Após executar o projeto, a documentação interativa está disponível em http://localhost:8000/docs/api
 
-Destaques tecnicos:
+Destaques técnicos:
 - Laravel 12.x + PHP 8.2 + SQLite
 - Arquitetura em camadas (Controller -> Service -> Model)
 - 6 endpoints RESTful implementados
 - 18 testes automatizados (66 assertions)
-- Documentacao OpenAPI/Swagger automatica
-- Auditoria completa de acoes
+- Documentação OpenAPI/Swagger automática
+- Auditoria completa de ações
 - Rate limiting (60 req/min)
-- Validacao de CPF com algoritmo oficial
+- Validação de CPF com algoritmo oficial
 - Custom Exceptions com status HTTP
 - Seeds com 15 pacientes e 15 leitos para testes
 
-Tempo de execucao apos clone:
+Tempo de execução após clone:
 1. composer install
 2. php artisan migrate:fresh --seed
 3. php artisan serve
@@ -73,9 +73,9 @@ Tempo de execucao apos clone:
 
 ---
 
-## Opcao 2: Publicar no GitLab
+## Opção 2: Publicar no GitLab
 
-### Passo 1: Criar repositorio no GitLab
+### Passo 1: Criar repositório no GitLab
 
 1. Acesse: https://gitlab.com/projects/new
 2. Escolha **"Create blank project"**
@@ -95,27 +95,27 @@ git push -u origin main
 
 ---
 
-## Opcao 3: Enviar como arquivo ZIP
+## Opção 3: Enviar como arquivo ZIP
 
-Se preferir nao usar GitHub/GitLab:
+Se preferir não usar GitHub/GitLab:
 
-### Passo 1: Limpar arquivos desnecessarios
+### Passo 1: Limpar arquivos desnecessários
 
 ```bash
-# Remova a pasta vendor (sera reinstalada)
+# Remova a pasta vendor (será reinstalada)
 rm -rf vendor
 
 # Remova node_modules se existir
 rm -rf node_modules
 
-# Remova o banco de dados (sera recriado)
+# Remova o banco de dados (será recriado)
 rm -f database/database.sqlite
 ```
 
 ### Passo 2: Criar arquivo ZIP
 
 **Windows:**
-1. Clique com botao direito na pasta `hospital-api`
+1. Clique com botão direito na pasta `hospital-api`
 2. Selecione "Enviar para" > "Pasta compactada"
 3. Renomeie para `hospital-api.zip`
 
@@ -127,12 +127,12 @@ zip -r hospital-api.zip hospital-api -x "*/vendor/*" "*/node_modules/*" "*/.git/
 
 ---
 
-## Verificacoes Finais Antes de Enviar
+## Verificações Finais Antes de Enviar
 
-Execute estes comandos para garantir que tudo esta funcionando:
+Execute estes comandos para garantir que tudo está funcionando:
 
 ```bash
-# 1. Instale as dependencias
+# 1. Instale as dependências
 composer install
 
 # 2. Recrie o banco do zero com dados de teste
@@ -149,7 +149,7 @@ curl http://localhost:8000/api/leitos
 curl http://localhost:8000/api/pacientes
 curl http://localhost:8000/api/pacientes/52998224725/leito
 
-# 6. Verifique a documentacao
+# 6. Verifique a documentação
 # Abra: http://localhost:8000/docs/api
 ```
 
@@ -192,29 +192,29 @@ Tests: 18 passed (66 assertions)
 - Listar todos os leitos com status (GET /api/leitos)
 - Listar todos os pacientes (GET /api/pacientes)
 
-### Regras de negocio
+### Regras de negócio
 
-- Paciente nao pode estar em multiplos leitos simultaneamente
+- Paciente não pode estar em múltiplos leitos simultaneamente
 - Leito aceita apenas um paciente por vez
-- Transferencias sao atomicas (DB::transaction)
-- CPF unico e validado com algoritmo oficial
+- Transferências são atômicas (DB::transaction)
+- CPF único e validado com algoritmo oficial
 
 ### Diferenciais implementados
 
-| Diferencial | Descricao |
+| Diferencial | Descrição |
 | --- | --- |
-| **Service Layer** | Logica de negocio isolada em `LeitoService.php`, separada do controller |
-| **Custom Exceptions** | Classe `LeitoException` com metodos estaticos para cada erro de negocio e status HTTP apropriado |
-| **Global Exception Handler** | Erros de negocio tratados globalmente em `bootstrap/app.php`, retornando JSON padronizado |
-| **API Resources** | `LeitoResource` e `PacienteResource` padronizam o formato JSON de saida |
-| **PHP Enums** | `StatusLeito` e `TipoLeito` com cast automatico no Eloquent para type safety |
-| **Paginacao configuravel** | Parametro `per_page` (1 a 100) em todos os endpoints de listagem |
-| **Validacao de CPF** | Rule customizada `CpfValido` com algoritmo oficial de digitos verificadores |
-| **Rate Limiting** | 60 requisicoes por minuto por IP, configurado via `AppServiceProvider` |
-| **Auditoria completa** | Tabela `auditoria_leitos` registra toda acao (OCUPAR, LIBERAR, TRANSFERIR) + Log::info |
-| **Testes automatizados** | 18 testes com 66 assertions cobrindo todos os endpoints e regras de negocio |
-| **Documentacao Swagger** | OpenAPI gerada automaticamente via Scramble em `/docs/api` |
-| **Seeds completos** | 15 pacientes com CPFs validos + 15 leitos (UTI, Enfermaria, Quarto) |
+| **Service Layer** | Lógica de negócio isolada em `LeitoService.php`, separada do controller |
+| **Custom Exceptions** | Classe `LeitoException` com métodos estáticos para cada erro de negócio e status HTTP apropriado |
+| **Global Exception Handler** | Erros de negócio tratados globalmente em `bootstrap/app.php`, retornando JSON padronizado |
+| **API Resources** | `LeitoResource` e `PacienteResource` padronizam o formato JSON de saída |
+| **PHP Enums** | `StatusLeito` e `TipoLeito` com cast automático no Eloquent para type safety |
+| **Paginação configurável** | Parâmetro `per_page` (1 a 100) em todos os endpoints de listagem |
+| **Validação de CPF** | Rule customizada `CpfValido` com algoritmo oficial de dígitos verificadores |
+| **Rate Limiting** | 60 requisições por minuto por IP, configurado via `AppServiceProvider` |
+| **Auditoria completa** | Tabela `auditoria_leitos` registra toda ação (OCUPAR, LIBERAR, TRANSFERIR) + Log::info |
+| **Testes automatizados** | 18 testes com 66 assertions cobrindo todos os endpoints e regras de negócio |
+| **Documentação Swagger** | OpenAPI gerada automaticamente via Scramble em `/docs/api` |
+| **Seeds completos** | 15 pacientes com CPFs válidos + 15 leitos (UTI, Enfermaria, Quarto) |
 | **SQLite** | Portabilidade total, sem necessidade de configurar servidor de banco |
 
 ### Arquitetura
@@ -224,32 +224,32 @@ Request -> Controller -> Service -> Model -> Database
                |
           Resource -> JSON Response
                |
-        LeitoException (erros de negocio)
+        LeitoException (erros de negócio)
                |
-        AuditoriaLeito (log de acoes)
+        AuditoriaLeito (log de ações)
 ```
 
 | Camada | Responsabilidade | Arquivo |
 | --- | --- | --- |
-| **Controller** | Validacao de input e formatacao de response | `LeitoController.php` |
-| **Service** | Logica de negocio, transacoes e auditoria | `LeitoService.php` |
+| **Controller** | Validação de input e formatação de response | `LeitoController.php` |
+| **Service** | Lógica de negócio, transações e auditoria | `LeitoService.php` |
 | **Model** | Relacionamentos e casting de dados | `Leito.php`, `Paciente.php`, `AuditoriaLeito.php` |
-| **Resource** | Padronizacao do formato JSON de saida | `LeitoResource.php`, `PacienteResource.php` |
+| **Resource** | Padronização do formato JSON de saída | `LeitoResource.php`, `PacienteResource.php` |
 | **Enum** | Type safety para status e tipos de leito | `StatusLeito.php`, `TipoLeito.php` |
-| **Exception** | Erros de negocio com HTTP status codes | `LeitoException.php` |
-| **Rule** | Validacao customizada de CPF | `CpfValido.php` |
+| **Exception** | Erros de negócio com HTTP status codes | `LeitoException.php` |
+| **Rule** | Validação customizada de CPF | `CpfValido.php` |
 
 ---
 
 ## Dicas Finais
 
-1. **Teste tudo antes de enviar** - Execute `php artisan test` para garantir que os 18 testes passam
-2. **Nao inclua o .env no repositorio** - O .gitignore ja esta configurado para isso
-3. **Use a documentacao Swagger** - Mencione que ha uma interface interativa em `/docs/api`
-4. **Destaque os diferenciais** - Service Layer, testes automatizados e auditoria sao pontos fortes
+1. **Teste tudo antes de enviar** - Execute `php artisan test` para garantir que os 18 testes passam.
+2. **Não inclua o .env no repositório** - O .gitignore já está configurado para isso.
+3. **Use a documentação Swagger** - Mencione que há uma interface interativa em `/docs/api`.
+4. **Destaque os diferenciais** - Service Layer, testes automatizados e auditoria são pontos fortes.
 
 ---
 
 ## Pronto para enviar!
 
-Apos seguir um dos metodos acima, seu projeto estara pronto para avaliacao.
+Após seguir um dos métodos acima, seu projeto estará pronto para avaliação.
